@@ -94,7 +94,7 @@ $villageData = $village->afficherVillage();
          
           <div class="col-lg-10">
           <h1>Ajouter Village</h1>
-            <form action="controller/villageController.php" method="post" role="form" class="php-email-form">
+            <form action="controller/villageController.php" method="post" role="form" enctype="multipart/form-data"  class="php-email-form">
           
                
               <div class="form-group mt-3">
@@ -121,32 +121,55 @@ $villageData = $village->afficherVillage();
         <div class="row mt-5 justify-content-center" data-aos="fade-up">
           <div class="col-lg-10">
           <h1>Ajouter Projet</h1>
-            <form action="controller/projetController.php" method="post" role="form" class="php-email-form">
+          <form action="controller/projetController.php" method="post" role="form" class="php-email-form">
           
                
-              <div class="form-group mt-3">
-                <label for="name">Titre</label>
-                <input type="text" class="form-control" name="description" id="subject" placeholder="Titre de projet" required>
+          <div class="form-group mt-3">
+            <label for="name">Titre</label>
+            <input type="text" class="form-control" name="description" id="subject" placeholder="Titre de projet" required>
+          </div>
+       
+          <div class="form-group mt-3">
+          <label for="name">Village</label>
+          <select class="form-select" aria-label="Default select example" name="village">
+              <option selected>Sélectionne le village</option>
+              <?php foreach ($villageData as $village): ?>
+              <option value="<?php echo $village['id_village']; ?>"><?php echo $village['nom']; ?></option>
+              <?php endforeach; ?>
+          </select>
+          </div>
+          
+          <h4>Ajouter description de projet</h4>
+
+          <div id="section-template" style="display: none;">
+        <div class="section-item">
+            <div class="form-group mt-3">
+                <label>Titre de Section</label>
+                <input type="text" class="form-control" name="titre_section" placeholder="Titre de la section" >
+            </div>
+            <div class="form-group mt-3">
+                <label>Image</label>
+                <input type="file" class="form-control" name="image_section" accept="image/*" >
+            </div>
+            <div class="form-group mt-3">
+                <label>Description</label>
+                <textarea class="form-control" name="description_section" rows="5" placeholder="Description de la section" ></textarea>
+            </div>
+            <button type="button" class="btn btn-secondary mt-3 remove-section">Supprimer</button>
+            <hr>
+        </div>
+    </div>
+              <div id="sections-container">
+                  <!-- Les sections dupliquées seront ajoutées ici -->
               </div>
-           
-              <div class="form-group mt-3">
-              <label for="name">Village</label>
-              <select class="form-select" aria-label="Default select example" name="village">
-                  <option selected>Sélectionne le village</option>
-                  <?php foreach ($villageData as $village): ?>
-                  <option value="<?php echo $village['id_village']; ?>"><?php echo $village['nom']; ?></option>
-                  <?php endforeach; ?>
-              </select>
-              </div>
-              
-              <!-- <div class="form-group mt-3">
-              <label for="name">Titre</label>
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-              </div> -->
-              
-              
-              <div class="text-center"><button type="submit" style="background: #1bbd36;border: 0;padding: 10px 24px;color: #fff;transition: 0.4s;border-radius: 4px; margin-top:5px;" >Ajouter</button></div>
-            </form>
+
+              <button type="button" id="add-section" class="btn mt-3" style="background-color: #18d2cb;">Ajouter Section</button>
+
+                        
+          
+          <div class="text-center"><button type="submit" style="background: #1bbd36;border: 0;padding: 10px 24px;color: #fff;transition: 0.4s;border-radius: 4px; margin-top:5px;" >Ajouter</button></div>
+        </form>
+      
           </div>
 
         </div>
@@ -159,6 +182,32 @@ $villageData = $village->afficherVillage();
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+  <script >
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const addSectionBtn = document.getElementById('add-section');
+        const sectionsContainer = document.getElementById('sections-container');
+        const sectionTemplate = document.getElementById('section-template');
+
+        addSectionBtn.addEventListener('click', function() {
+          
+            const clone = sectionTemplate.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.style.display = 'block';
+            sectionsContainer.appendChild(clone);
+        });
+
+        sectionsContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-section')) {
+             
+              event.target.closest('.section-item').remove();
+              
+            }
+           
+        });
+        
+    });
+  </script>
   <!-- Vendor JS Files -->
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
