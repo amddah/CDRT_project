@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>Système de Notation SOC – Version Complète</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- MathJax for LaTeX rendering -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary: #0ea5e9;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --background: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      
+      --emergent: #dbeafe;
+      --structurant: #dcfce7;
+      --stabilise: #fef9c3;
+      --pilote: #ffedd5;
+      --transformant: #fee2e2;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    
+    /* Header styles */
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .header-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiPjwvcmVjdD4KPC9zdmc+');
+      opacity: 0.3;
+      z-index: 0;
+    }
+    
+    header .content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Container and layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    section {
+      margin-bottom: 3rem;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+      font-size: 1.4rem;
+      margin: 1.5rem 0 1rem;
+      color: var(--primary-dark);
+    }
+    
+    p {
+      margin-bottom: 1.2rem;
+      color: var(--text);
+    }
+    
+    ul, ol {
+      margin-bottom: 1.2rem;
+      padding-left: 1.5rem;
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.35em 0.65em;
+      font-size: 0.75em;
+      font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.375rem;
+    }
+    
+    .badge-emergent {
+      background-color: var(--emergent);
+      color: #2563eb;
+    }
+    
+    .badge-structurant {
+      background-color: var(--structurant);
+      color: #16a34a;
+    }
+    
+    .badge-stabilise {
+      background-color: var(--stabilise);
+      color: #ca8a04;
+    }
+    
+    .badge-pilote {
+      background-color: var(--pilote);
+      color: #ea580c;
+    }
+    
+    .badge-transformant {
+      background-color: var(--transformant);
+      color: #dc2626;
+    }
+    
+    /* Dashboard cards */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+    
+    .stat-card i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    
+    .stat-card h3 {
+      font-size: 1.75rem;
+      margin-top: 0.5rem;
+    }
+    
+    .stat-card p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+    
+    /* Tables */
+    .table-container {
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+      text-align: left;
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+    
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+      vertical-align: middle;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    tr:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+    
+    /* PDF content */
+    .pdf-content {
+      background-color: #fdfdfd;
+      border-left: 5px solid var(--primary);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      border-radius: 0 8px 8px 0;
+      max-height: none; /* Remove height restriction */
+      white-space: pre-wrap;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Notes and callouts */
+    .note {
+      background-color: #f8f9fa;
+      border-left: 5px solid var(--primary);
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .note-icon {
+      margin-right: 0.5rem;
+      color: var(--primary);
+    }
+    
+    /* DataTables customization */
+    .dataTables_wrapper .dataTables_filter input {
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.5rem;
+      margin-left: 0.5rem;
+    }
+    
+    .dataTables_wrapper .dataTables_length select {
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.4rem;
+      margin: 0 0.5rem;
+    }
+    
+    .dataTables_wrapper .dataTables_info {
+      padding-top: 1rem;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      border: 1px solid var(--border) !important;
+      border-radius: 5px !important;
+      padding: 0.4rem 0.8rem !important;
+      margin-left: 0.25rem;
+      background: var(--card-bg) !important;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: var(--primary) !important;
+      color: white !important;
+      border-color: var(--primary) !important;
+    }
+    
+    /* Formula styles */
+    .formula {
+      background: #f3f4f6;
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+    
+    .formula-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary-dark);
+    }
+    
+    /* Responsive rules */
+    @media (max-width: 768px) {
+      header {
+        padding: 2rem 1rem;
+      }
+      
+      header h1 {
+        font-size: 2rem;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      h3 {
+        font-size: 1.25rem;
+      }
+    }
+    
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    footer p {
+      color: white;
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        font-size: 12pt;
+        background: white;
+      }
+      
+      header, footer {
+        background: white !important;
+        color: black;
+        padding: 1rem;
+      }
+      
+      .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+      
+      .dashboard {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .pdf-content {
+        max-height: none;
+        overflow: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+<div class="header-overlay"></div>
+<div class="content">
+<h1>Système de Notation de Maturité SOC</h1>
+<p>Cadre méthodologique &amp; Matrice d'évaluation pour centres d'opérations de sécurité</p>
+</div>
+</header>
+<div class="container">
+<!-- Dashboard Stats -->
+<section>
+<div class="dashboard">
+<div class="stat-card">
+<i class="fas fa-chart-line"></i>
+<p>Niveaux de maturité</p>
+<h3>5</h3>
+</div>
+<div class="stat-card">
+<i class="fas fa-puzzle-piece"></i>
+<p>Domaines évalués</p>
+<h3>4</h3>
+</div>
+<div class="stat-card">
+<i class="fas fa-tasks"></i>
+<p>Composants</p>
+<h3>12+</h3>
+</div>
+<div class="stat-card">
+<i class="fas fa-question-circle"></i>
+<p>Questions d'évaluation</p>
+<h3>68</h3>
+</div>
+</div>
+</section>
+<!-- ORDRE INVERSÉ: Les Quatre Domaines Évalués en premier -->
+<section class="card">
+<h2>Les Quatre Domaines Évalués</h2>
+<div class="dashboard">
+<div class="stat-card">
+<i class="fas fa-users"></i>
+<h3>Personnel</h3>
+<p>Structure organisationnelle, compétences, formation et leadership</p>
+</div>
+<div class="stat-card">
+<i class="fas fa-laptop-code"></i>
+<h3>Technologie</h3>
+<p>Outils, infrastructure, détection et automatisation</p>
+</div>
+<div class="stat-card">
+<i class="fas fa-cogs"></i>
+<h3>Processus</h3>
+<p>Procédures, gouvernance et gestion des incidents</p>
+</div>
+<div class="stat-card">
+<i class="fas fa-chart-bar"></i>
+<h3>Indicateurs</h3>
+<p>KPIs, reporting et amélioration continue</p>
+</div>
+</div>
+</section>
+<section class="card">
+<h2>Niveaux de Maturité</h2>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Niveau</th>
+<th>Catégorie</th>
+<th>Score</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0-1</td>
+<td><span class="badge badge-emergent">Initial</span></td>
+<td>&lt; 20%</td>
+<td>Organisation immature ou non structurée</td>
+</tr>
+<tr>
+<td>1</td>
+<td><span class="badge badge-structurant">Structurant</span></td>
+<td>20-40%</td>
+<td>Les premières bases sont posées, procédures initiales</td>
+</tr>
+<tr>
+<td>2</td>
+<td><span class="badge badge-stabilise">Stabilisé</span></td>
+<td>40-60%</td>
+<td>Pratiques répétables et documentées</td>
+</tr>
+<tr>
+<td>3</td>
+<td><span class="badge badge-pilote">Piloté</span></td>
+<td>60-80%</td>
+<td>Processus suivis et ajustés, mesures d'amélioration</td>
+</tr>
+<tr>
+<td>4-5</td>
+<td><span class="badge badge-transformant">Transformant</span></td>
+<td>&gt; 80%</td>
+<td>Excellence opérationnelle et innovation continue</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="card">
+<h2>1. Résumé Exécutif</h2>
+<p>Ce document expose la méthode d'évaluation prévue pour convertir les réponses recueillies via les questionnaires de maturité des Centres d'Opérations de Sécurité (SOC) en niveaux pertinents, utilisables et cohérents.</p>
+<p>Ce dispositif est un élément essentiel de l'évaluation SOC, puisqu'il offre la possibilité de transformer des données qualitatives (réponses à des enquêtes) en informations quantitatives exactes. Ceci favorise la mise en parallèle, la gestion stratégique ainsi que la détection des axes d'amélioration. Il a été conçu pour fournir simultanément :</p>
+<ul>
+<li><strong>Rigueur méthodologique</strong>, afin de garantir la précision et la reproductibilité des résultats</li>
+<li><strong>Flexibilité contextuelle</strong>, afin de s'adapter aux différentes tailles et structures de SOC</li>
+<li><strong>Lisibilité opérationnelle</strong>, afin que les résultats puissent être interprétés aisément par toutes les parties prenantes</li>
+</ul>
+<p>La méthode englobe tout le processus : de l'évaluation individuelle des questions à l'agrégation des scores par domaine et du niveau global de maturité. Elle inclut aussi la gestion de la qualité des preuves et l'établissement du degré de fiabilité.</p>
+</section>
+<section class="card">
+<h2>2. Approche Générale de Notation</h2>
+<p>Le système de notation s'appuie sur une structure hiérarchique correspondant aux composants du modèle d'évaluation :</p>
+<ul>
+<li><strong>Niveau de question</strong>: chaque interrogation est liée à un degré de maturité (1 à 5). On évalue une réponse sur une échelle de 1 à 5, basée sur sa conformité aux critères, puis on la modifie en utilisant un coefficient qui tient compte de la qualité des preuves présentées.</li>
+<li><strong>Niveau composant</strong>: les questions sont organisées en composants thématiques. Pour déterminer le score du composant, on regroupe les scores des différentes questions. Selon l'importance stratégique du composant, un facteur de pondération pourrait être appliqué.</li>
+<li><strong>Niveau domaine</strong>: les composants sont ensuite consolidés au sein des quatre domaines (Personnel, Processus, Technologie, Indicateurs). Chaque domaine reçoit un score agrégé tenant compte des pondérations internes et des dépendances critiques.</li>
+<li><strong>Niveau global</strong>: le niveau de maturité global du SOC est déterminé par la moyenne pondérée des scores des domaines, ajustée selon un niveau de confiance calculé à partir de la couverture des preuves.</li>
+</ul>
+<p>Cette méthode offre une évaluation graduelle, suivie et contextualisée du niveau de maturité du SOC, tout en considérant les situations <strong>Non Applicables</strong> sans fausser les résultats.</p>
+<h3>2.1. Notation au niveau des questions</h3>
+<p>Chaque question est associée à un niveau cible (1 à 5), mais la réponse peut être binaire, ternaire ou échelonnée. Le score brut dépend de la correspondance entre la réponse et le niveau attendu.</p>
+<p>Un multiplicateur de qualité de preuve est appliqué :</p>
+<ul>
+<li>Aucune preuve : 0</li>
+<li>Preuve partielle/faible : 0,5</li>
+<li>Preuve adéquate : 1</li>
+<li>Preuve solide et vérifiable : 1,2</li>
+</ul>
+<p>Le score attribué à chaque question est déterminé à partir de deux paramètres principaux :</p>
+<ul>
+<li>La pondération attribuée à la question, en fonction de son importance stratégique dans l'évaluation (notée \(P_q\), valeurs possibles : 1.0, 1.1, 1.2).</li>
+<li>La criticité du composant associé à la question, qui indique si la question concerne une capacité critique (notée \(C_c \in \{0, 1\}\), avec \(C_c = 1\) si la criticité est Oui, \(C_c = 0\) sinon).</li>
+</ul>
+<div class="formula">
+<div class="formula-title">Formule mathématique du Score_Question :</div>
+<p>Soient :</p>
+<p>\(P_q\) : Pondération de la question (1.0, 1.1, 1.2)</p>
+<p>\(C_c\) : Criticité du composant (\(1\) si critique, \(0\) sinon)</p>
+<p>Règle de calcul :</p>
+        $$
+        \text{Score\_Question} = 
+        \begin{cases} 
+        4 &amp; \text{si } P_q = 1.0 \text{ et } C_c = 1 \\
+        3 &amp; \text{si } P_q = 1.0 \text{ et } C_c = 0 \\
+        5 &amp; \text{si } P_q = 1.1 \text{ et } C_c = 1 \\
+        4 &amp; \text{si } P_q = 1.1 \text{ et } C_c = 0 \\
+        6 &amp; \text{si } P_q = 1.2 \text{ et } C_c = 1 \\
+        5 &amp; \text{si } P_q = 1.2 \text{ et } C_c = 0 \\
+        \text{Indéfini} &amp; \text{sinon}
+        \end{cases}
+        $$
+      </div>
+<p>Cette table de décision permet de valoriser les réponses associées à des questions critiques ou fortement pondérées, en cohérence avec l'objectif de hiérarchisation des capacités au sein du SOC.</p>
+<h3>2.2. Agrégation au niveau des composants</h3>
+<p>Le score d'un composant est basé sur la moyenne pondérée des questions qui le composent, en tenant compte de leur pondération spécifique.</p>
+<p>Données utilisées :</p>
+<p>Pour un composant \(CC\) constitué de \(n\) questions indexées par \(i\) :</p>
+<ul>
+<li>\(S_i\) : score obtenu à la question \(i\) (déjà calculé selon la logique métier)</li>
+<li>\(P_i\) : pondération associée à la question \(i\) (valeurs possibles : 1.0, 1.1, 1.2)</li>
+<li>\(S_{max} = 6\) : score maximum possible par question (si preuve solide et criticité élevée)</li>
+</ul>
+<div class="formula">
+<div class="formula-title">Formule mathématique du Score_Composant :</div>
+        $$
+        \text{Score\_Composant} = \frac{\sum_{i=1}^{n} (S_i \times P_i)}{\sum_{i=1}^{n} (P_i \times S_{max})}
+        $$
+      </div>
+<ul>
+<li>Le numérateur représente la somme pondérée des scores réels obtenus sur les questions du composant.</li>
+<li>Le dénominateur représente le score maximal théorique pondéré que ce composant pourrait atteindre (s'il obtenait \(6\) à toutes les questions avec preuve solide et criticité active).</li>
+<li>Le score final est un ratio entre 0 et 1, exprimant le taux d'atteinte du niveau attendu pour le composant.</li>
+<li>Si le composant est <strong>critiquement important</strong>, une non-conformité peut <strong>limiter le niveau de maturité maximal</strong> du domaine, quelle que soit la note agrégée.</li>
+</ul>
+<h3>2.3. Agrégation au niveau des domaines</h3>
+<div class="formula">
+<div class="formula-title">Formule de calcul du score de domaine :</div>
+        $$
+        \text{Score\_domaine} = \frac{\sum(\text{Score\_composant} \times \text{Pondération\_composant})}{\sum(\text{Pondération\_composant})}
+        $$
+      </div>
+<ul>
+<li>Les composants marqués comme « non applicables » sont exclus du calcul.</li>
+<li>Un composant critique avec un score nul peut limiter le niveau maximal du domaine.</li>
+<li>Le domaine est noté comme suit :
+          <ul>
+<li>&lt; 20% : Niveau 0-1 (Initial)</li>
+<li>20–40% : Niveau 1 (Structurant)</li>
+<li>40–60% : Niveau 2 (Stabilisé)</li>
+<li>60–80% : Niveau 3 (Piloté)</li>
+<li>80–90% : Niveau 4 (Transformant débutant)</li>
+<li>≥ 90% : Niveau 5 (Transformant avancé)</li>
+</ul>
+</li>
+</ul>
+<h3>2.4. Calcul du niveau global</h3>
+<div class="formula">
+<div class="formula-title">Formule de calcul du score global :</div>
+        $$
+        \text{Score\_global} = \frac{\sum(\text{Score\_domaine} \times \text{Pondération\_domaine})}{\sum(\text{Pondération\_domaine})}
+        $$
+      </div>
+<ul>
+<li>Par défaut, tous les domaines ont un poids équivalent (pondération = 1). Toutefois, une pondération stratégique peut être appliquée si certains domaines sont jugés plus critiques (ex. : Technologie &gt; Processus).</li>
+<li>Ce score global est ensuite <strong>ajusté par le niveau de confiance</strong>, calculé comme suit :</li>
+</ul>
+<div class="formula">
+<div class="formula-title">Calcul du niveau de confiance :</div>
+        $$
+        \text{Confiance} = \frac{\text{Nombre de questions avec preuve}}{\text{Nombre total de questions pertinentes}}
+        $$
+      </div>
+<p>Seuils de confiance :</p>
+<ul>
+<li>&lt; 50% → Faible (révision des résultats à prévoir)</li>
+<li>50–80% → Moyen</li>
+<li>≥ 80% → Élevé</li>
+</ul>
+<p>Le niveau global de maturité n'est <strong>validé définitivement</strong> que si les capacités critiques ont été démontrées.</p>
+</section>
+<section class="card">
+<h2>3. Lignes directrices pour l'implémentation</h2>
+<h3>3.1. Application cohérente</h3>
+<ul>
+<li>Tous les évaluateurs doivent utiliser des grilles standardisées.</li>
+<li>Des sessions de calibration inter-évaluateurs doivent être organisées.</li>
+</ul>
+<h3>3.2. Gestion du "Non Applicable"</h3>
+<ul>
+<li>Les questions <strong>N/A</strong> sont <strong>exclues du calcul</strong> sans affecter les pondérations des autres questions.</li>
+<li>Le score maximal est ajusté automatiquement.</li>
+</ul>
+<h3>3.3. Vérification de la qualité des preuves</h3>
+<ul>
+<li>Les preuves doivent être <strong>datées, vérifiables, représentatives et accessibles</strong>.</li>
+<li>Une checklist de qualité documentaire doit être utilisée.</li>
+</ul>
+<h3>3.4. Visualisation des résultats</h3>
+<ul>
+<li>Les résultats doivent être présentés dans un format lisible : tableau de synthèse, graphe radar par domaine, note de confiance.</li>
+</ul>
+<h3>3.5. Cas limites</h3>
+<ul>
+<li>Si un domaine a plus de 30% de réponses N/A, il est <strong>marqué comme non-évaluable</strong>.</li>
+<li>Une capacité critique manquante bloque la montée de niveau, <strong>même en présence d'un score élevé</strong>.</li>
+</ul>
+<h3>3.6. Documentation et traçabilité</h3>
+<ul>
+<li>Chaque évaluation doit être sauvegardée avec :
+          <ul>
+<li>Date d'évaluation</li>
+<li>Nom des évaluateurs</li>
+<li>Version du modèle utilisé</li>
+<li>Références aux preuves archivées</li>
+</ul>
+</li>
+</ul>
+</section>
+<section class="card">
+<h2>7. Procédures de calcul des scores</h2>
+<p>Le calcul du niveau de maturité suit une logique progressive en quatre étapes : question → composant → domaine → global. Chaque étape repose sur des règles simples qui garantissent cohérence, lisibilité et précision.</p>
+<h3>7.1. Évaluation au niveau des questions</h3>
+<p>Chaque question du questionnaire est conçue pour mesurer un niveau de maturité spécifique (de 1 à 5). Lorsque l'évaluateur ou l'organisation répond à la question, la réponse est d'abord convertie en score :</p>
+<ul>
+<li>Une réponse « Pas du tout présent » = score 0</li>
+<li>Une réponse « Totalement mis en place » = score 1</li>
+<li>Les autres niveaux sont convertis proportionnellement : 0.25, 0.5, 0.75</li>
+</ul>
+<p>Ensuite, on tient compte de la <strong>qualité des preuves</strong> fournies. C'est-à-dire : est-ce que la réponse est justifiée par un document, une capture d'écran, une procédure interne ?</p>
+<ul>
+<li>Si aucune preuve : la réponse n'est pas prise en compte (score 0)</li>
+<li>Si une preuve partielle est fournie : le score est réduit (coefficient 0,5)</li>
+<li>Si la preuve est solide : le score est maintenu ou renforcé (coefficient 1 ou 1,2)</li>
+</ul>
+<p><strong>Objectif de cette étape</strong> : mesurer la mise en œuvre réelle des pratiques, en s'assurant qu'elles sont appuyées par des éléments concrets.</p>
+<h3>7.2. Calcul au niveau du composant</h3>
+<p>Les questions sont regroupées par <strong>composants</strong> (par exemple : <em>Gestion des incidents</em>, <em>Cartographie des outils</em>, etc.).</p>
+<p>Pour chaque composant, on fait la moyenne des scores des questions associées, en tenant compte :</p>
+<ul>
+<li>de leur importance (certaines questions comptent plus que d'autres),</li>
+<li>et de leur note maximale possible (selon la preuve et la criticité).</li>
+</ul>
+<p><strong>Pourquoi faire ça ?</strong> Parce qu'un composant peut comporter 3 ou 6 questions. Il faut donc <strong>normaliser les résultats</strong> pour que tous les composants soient comparables.</p>
+<p><strong>Attention</strong> : si un composant est considéré comme <strong>critique</strong> (par exemple : la détection des menaces), et qu'il obtient un score nul, alors le domaine auquel il appartient ne pourra pas atteindre un haut niveau de maturité, même si les autres composants sont bons.</p>
+<h3>7.3. Calcul au niveau des domaines</h3>
+<p>Les composants sont ensuite regroupés en quatre grands domaines :</p>
+<ul>
+<li><strong>Personnel</strong> (organisation de l'équipe, compétences, culture)</li>
+<li><strong>Technologie</strong> (outils de détection, architecture, surveillance)</li>
+<li><strong>Processus</strong> (réponse aux incidents, escalade, documentation)</li>
+<li><strong>Indicateurs</strong> (KPI, reporting, amélioration continue)</li>
+</ul>
+<p>Le score d'un domaine est la <strong>moyenne pondérée des scores des composants</strong>. Cela permet de voir dans quel domaine le SOC est fort, et dans quel autre il doit s'améliorer.</p>
+<p><strong>Remarque importante</strong> : si un domaine contient un composant critique avec un score nul, cela peut empêcher ce domaine d'obtenir une bonne note globale.</p>
+<h3>7.4. Calcul du score global et du niveau de confiance</h3>
+<p>Le score global correspond à la <strong>moyenne des 4 domaines</strong>, avec des poids identiques (ou ajustés selon le contexte stratégique).</p>
+<p>Mais ce score seul ne suffit pas. Il est aussi accompagné d'un <strong>niveau de confiance</strong>, basé sur le nombre de réponses qui ont été justifiées par des preuves :</p>
+<ul>
+<li>Si moins de 50% des réponses ont une preuve : <strong>confiance faible</strong></li>
+<li>Si 50–80% des réponses sont prouvées : <strong>confiance moyenne</strong></li>
+<li>Si plus de 80% sont prouvées : <strong>confiance élevée</strong></li>
+</ul>
+<p><strong>Pourquoi ce double indicateur ?</strong> Parce qu'une organisation peut donner de bonnes réponses... mais si elle ne fournit aucune preuve, on ne peut pas s'y fier. Le niveau de confiance permet donc de <strong>valider ou nuancer les résultats obtenus</strong>.</p>
+<p>Ces quatre niveaux de calcul permettent d'avoir une évaluation :</p>
+<ul>
+<li><strong>Précise</strong> : car chaque détail est pris en compte</li>
+<li><strong>Juste</strong> : car la qualité des preuves est valorisée</li>
+<li><strong>Exploitable</strong> : les scores permettent d'identifier les points forts et les faiblesses par domaine</li>
+</ul>
+<p>Cela garantit que le score final reflète bien la maturité réelle du SOC et non seulement les intentions déclarées.</p>
+</section>
+<section class="card">
+<h2>8. Lignes directrices pour l'interprétation des résultats</h2>
+<p>L'interprétation des résultats repose sur deux axes principaux : <strong>le niveau de maturité global</strong> et <strong>le niveau de confiance</strong>.</p>
+<h3>Niveau de maturité global</h3>
+<p>Le score global est exprimé entre 0 et 1. Pour faciliter sa lecture, on le convertit en pourcentage en le multipliant par 100.</p>
+<p>Par exemple, un score de <strong>0.78</strong> correspond à <strong>78%</strong>, soit un <strong>niveau de maturité 3</strong> (Piloté).</p>
+<p>L'interprétation du score se fait comme suit :</p>
+<ul>
+<li>Moins de 20% : niveau <strong>Initial (0-1)</strong>, organisation immature ou non structurée.</li>
+<li>Entre 20 et 40% : niveau <strong>Structurant</strong>, les premières bases sont posées.</li>
+<li>Entre 40 et 60% : niveau <strong>Stabilisé</strong>, les pratiques sont répétables.</li>
+<li>Entre 60 et 80% : niveau <strong>Piloté</strong>, les processus sont suivis et ajustés.</li>
+<li>Entre 80 et 90% : niveau <strong>Transformant débutant</strong>, forte évolution en cours.</li>
+<li>Au-delà de 90% : niveau <strong>Transformant avancé</strong>, maîtrise d'un SOC mature.</li>
+</ul>
+<h3>Niveau de confiance</h3>
+<p>Le niveau de confiance mesure la solidité des réponses, en fonction du nombre de preuves apportées.</p>
+<p>Il est calculé selon la formule suivante :</p>
+<div class="formula">
+        $$
+        \text{Confiance} = \frac{\text{Nombre de questions avec preuve}}{\text{Nombre total de questions pertinentes}}
+        $$
+      </div>
+<p>Trois niveaux sont définis :</p>
+<ul>
+<li>Moins de 50% : niveau de confiance <strong>faible</strong>, résultats à revalider.</li>
+<li>Entre 50 et 80% : niveau <strong>moyen</strong>, résultats à interpréter avec prudence.</li>
+<li>80% ou plus : niveau <strong>élevé</strong>, résultats exploitables et fiables.</li>
+</ul>
+<h3>Cas particuliers à prendre en compte</h3>
+<p>Même si un score de maturité est élevé, <strong>il n'est pas validé</strong> si le niveau de confiance est faible. Il est essentiel que les réponses soient justifiées par des preuves solides.</p>
+<p>De plus, si un <strong>composant critique</strong> a un score nul, le niveau global est bloqué, même si tous les autres scores sont bons. Cela empêche qu'une capacité essentielle soit ignorée dans l'évaluation.</p>
+</section>
+<section class="card">
+<h2>9. Gestion des scénarios courants</h2>
+<p>Cette partie propose des orientations pour gérer les situations spécifiques couramment rencontrées lors de l'évaluation de la maturité d'un SOC.</p>
+<h3>9.1. Questions marquées comme "Non Applicable"</h3>
+<p>Certaines questions peuvent ne pas concerner une organisation spécifique (ex. : SIEM cloud pour un SOC uniquement on-premise).</p>
+<ul>
+<li>Ces réponses sont exclues des calculs.</li>
+<li>Les pondérations des autres questions sont conservées.</li>
+<li>Le score maximal théorique est ajusté automatiquement.</li>
+</ul>
+<h3>9.2. Absence de preuve</h3>
+<p>Si aucune preuve n'est présentée pour une réponse, même si elle montre un haut niveau de maturité, son importance est annulée dans le calcul du score.</p>
+<ul>
+<li>Cela diminue le niveau de confiance global.</li>
+<li>L'évaluateur peut demander un complément d'information ou une justification.</li>
+</ul>
+<h3>9.3. Composant critique avec score nul</h3>
+<p>Un élément désigné comme <strong>critique</strong> est essentiel pour le fonctionnement efficace du SOC. Si un score nul est obtenu, cela empêche automatiquement l'élévation du niveau de maturité global.</p>
+<ul>
+<li>Cela garantit que les capacités essentielles sont bien couvertes.</li>
+<li>Même avec des scores élevés ailleurs, l'organisation ne peut prétendre à un haut niveau de maturité si des capacités critiques sont absentes.</li>
+</ul>
+<h3>9.4. Domaine partiellement évalué (plus de 30% de questions N/A)</h3>
+<p>Lorsqu'un domaine contient trop de questions marquées comme <strong>Non Applicable</strong>, son évaluation devient peu représentative.</p>
+<ul>
+<li>Si plus de 30% des questions d'un domaine sont marquées N/A, ce domaine est considéré comme <strong>non évaluable</strong>.</li>
+<li>Il est exclu du calcul du score global.</li>
+<li>Un commentaire doit être ajouté pour expliquer ce cas.</li>
+</ul>
+<h3>9.5. Score global élevé mais confiance faible</h3>
+<p>Une organisation peut obtenir un score élevé avec peu de preuves. Dans ce cas :</p>
+<ul>
+<li>Le niveau de maturité est considéré comme <strong>non validé</strong>.</li>
+<li>L'évaluation est jugée partiellement fiable.</li>
+<li>Une réévaluation est recommandée après consolidation des preuves.</li>
+</ul>
+<h3>9.6. Réponses incohérentes</h3>
+<p>En cas de réponses manifestement incohérentes (ex. : maturité déclarée maximale sans aucune preuve), l'évaluateur peut :</p>
+<ul>
+<li>Engager un échange avec le répondant pour clarifier la situation.</li>
+<li>Exclure la réponse ou noter une réserve dans le rapport final.</li>
+</ul>
+</section>
+<section class="card">
+<h2>Exemples de Niveaux de Maturité</h2>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Domaine</th>
+<th>Score</th>
+<th>Niveau</th>
+<th>Caractéristiques</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Personnel</td>
+<td>75%</td>
+<td><span class="badge badge-pilote">Piloté</span></td>
+<td>Équipe formée, rôles définis, suivi des compétences</td>
+</tr>
+<tr>
+<td>Processus</td>
+<td>62%</td>
+<td><span class="badge badge-pilote">Piloté</span></td>
+<td>Procédures documentées, amélioration continue</td>
+</tr>
+<tr>
+<td>Technologie</td>
+<td>85%</td>
+<td><span class="badge badge-transformant">Transformant</span></td>
+<td>Outils avancés, automatisation, vision stratégique</td>
+</tr>
+<tr>
+<td>Indicateurs</td>
+<td>58%</td>
+<td><span class="badge badge-stabilise">Stabilisé</span></td>
+<td>KPIs définis, mesures régulières, reporting</td>
+</tr>
+<tr>
+<td><strong>Global</strong></td>
+<td>70%</td>
+<td><span class="badge badge-pilote">Piloté</span></td>
+<td>SOC mature avec processus optimisés et mesurés</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<h1>Matrice de notation SOC – Pondérations, Criticité, Scores</h1><div id="tableContainer">
+<!-- Le tableau sera créé ici par JavaScript -->
+</div><script src="https://code.jquery.com/jquery-3.7.0.min.js"></script><script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script><script>
+    $(document).ready(function() {
+      // Données du tableau
+      const tableData = [
+        ["Personnel", "Modèles d'effectif et structure", "Q1", "Votre SOC dispose-t-il d'un organigramme formel ?", "Émergent", "1.2", "1.2", "oui", "6", "1.16"],
+        ["Personnel", "Modèles d'effectif et structure", "Q2", "La couverture horaire du SOC est-elle assurée en continu ?", "Émergent", "1.2", "1.2", "oui", "6", "1.12"],
+        ["Personnel", "Rôles et responsabilités", "Q3", "Les rôles des analystes sont-ils formellement définis ?", "Émergent", "1.2", "1.1", "oui", "6", "0.96"],
+        ["Personnel", "Rôles et responsabilités", "Q4", "Les compétences sont-elles associées à chaque rôle ?", "Émergent", "1.2", "1.1", "oui", "6", "0.92"],
+        ["Personnel", "Compétences et expertise", "Q5", "Le recrutement repose-t-il sur un référentiel de compétences ?", "Émergent", "1.1", "1.3", "oui", "5", "1.04"],
+        ["Personnel", "Compétences et expertise", "Q6", "Les compétences des analystes sont-elles évaluées régulièrement ?", "Structurant", "1.1", "1.3", "oui", "5", "1.00"],
+        ["Personnel", "Compétences et expertise", "Q7", "Le SOC dispose-t-il d'experts techniques spécialisés ?", "Stabilisé", "1.0", "1.3", "oui", "4", "0.96"],
+        ["Personnel", "Compétences et expertise", "Q8", "Le suivi des certifications est-il formalisé ?", "Stabilisé", "1.1", "1.3", "oui", "5", "1.00"],
+        ["Personnel", "Compétences et expertise", "Q9", "Le SOC anticipe-t-il les besoins futurs en compétences ?", "Transformant", "1.1", "1.3", "oui", "5", "0.96"],
+        ["Personnel", "Formation et développement", "Q10", "Existe-t-il un processus d'intégration pour les nouveaux analystes ?", "Émergent", "1.0", "1.2", "oui", "4", "0.89"],
+        ["Personnel", "Formation et développement", "Q11", "Les analystes participent-ils à des formations continues ?", "Structurant", "1.0", "1.2", "oui", "4", "0.85"],
+        ["Personnel", "Formation et développement", "Q12", "Existe-t-il un plan de carrière formel pour les analystes ?", "Stabilisé", "1.1", "1.2", "oui", "5", "0.89"],
+        ["Personnel", "Formation et développement", "Q13", "Les plans de formation sont-ils alignés sur les menaces émergentes ?", "Piloté", "1.0", "1.2", "oui", "4", "0.81"],
+        ["Personnel", "Leadership et gestion", "Q14", "Le taux de rotation du personnel est-il suivi ?", "Émergent", "1.2", "1.0", "Non", "5", "0.65"],
+        ["Personnel", "Leadership et gestion", "Q15", "La satisfaction des analystes est-elle mesurée ?", "Structurant", "1.0", "1.1", "Non", "3", "0.63"],
+        ["Personnel", "Leadership et gestion", "Q16", "Les incidents liés aux RH sont-ils documentés ?", "Structurant", "1.2", "1.1", "Non", "5", "0.75"],
+        ["Personnel", "Culture et collaboration", "Q17", "Des réunions de partage de retour d'expérience sont-elles organisées ?", "Structurant", "1.0", "1.1", "Non", "3", "0.71"],
+        ["Personnel", "Culture et collaboration", "Q18", "Les mécanismes de feedback sont-ils en place ?", "Piloté", "1.0", "1.1", "Non", "3", "0.75"],
+        ["Personnel", "Culture et collaboration", "Q19", "L'équipe participe-t-elle à des communautés professionnelles ?", "Transformant", "1.0", "1.0", "Non", "3", "0.75"],
+        
+        ["Technologie", "Cartographie des outils", "Q20", "Avez-vous une liste officielle et documentée de tous les outils technologiques utilisés dans le SOC ?", "Émergent", "1.2", "1.3", "oui", "6", "1.01"],
+        ["Technologie", "Cartographie des outils", "Q21", "La liste des outils est-elle maintenue à jour régulièrement ?", "Structurant", "1.0", "1.3", "oui", "4", "0.96"],
+        ["Technologie", "Cartographie des outils", "Q22", "Disposez-vous d'un inventaire documenté des sources de logs collectées ?", "Structurant", "1.0", "1.3", "oui", "4", "1.05"],
+        ["Technologie", "Détection", "Q23", "Les règles de détection sont-elles uniquement celles du fournisseur ou personnalisées ?", "Stabilisé", "1.1", "1.3", "oui", "5", "1.09"],
+        ["Technologie", "Détection", "Q24", "Avez-vous une liste des règles activées ou modifiées dans le SIEM ?", "Stabilisé", "1.0", "1.3", "oui", "4", "1.09"],
+        ["Technologie", "Supervision", "Q25", "Disposez-vous d'un tableau de bord de supervision ?", "Structurant", "1.1", "1.2", "oui", "5", "1.01"],
+        ["Technologie", "Mise à jour", "Q26", "Avez-vous un calendrier clair et un suivi des mises à jour ?", "Piloté", "1.2", "1.2", "oui", "6", "0.97"],
+        ["Technologie", "Mise à jour", "Q27", "Les mises à jour sont-elles planifiées formellement ?", "Piloté", "1.1", "1.2", "oui", "5", "0.88"],
+        ["Technologie", "Connexion des outils", "Q29", "Vos outils de sécurité sont-ils intégrés pour échanger des données automatiquement ?", "Stabilisé", "1.0", "1.3", "oui", "4", "1.01"],
+        ["Technologie", "Automatisation", "Q30", "L'équipe utilise-t-elle des outils automatisés pour des tâches répétitives ?", "Piloté", "1.0", "1.2", "oui", "4", "0.93"],
+        ["Technologie", "Automatisation", "Q31", "Les configurations critiques sont-elles historisées et tracées ?", "Transformant", "1.0", "1.2", "oui", "4", "1.01"],
+        ["Technologie", "Vision stratégique", "Q32", "Les choix technologiques sont-ils alignés avec les objectifs globaux ?", "Piloté", "1.2", "1.2", "oui", "6", "1.01"],
+        ["Technologie", "Vision stratégique", "Q33", "Faites-vous des analyses d'impact avant d'introduire une nouvelle techno ?", "Transformant", "1.1", "1.2", "oui", "5", "0.93"],
+        ["Technologie", "Vision stratégique", "Q34", "Disposez-vous d'une méthode pour anticiper les besoins technologiques ?", "Transformant", "1.0", "1.2", "oui", "4", "0.93"],
+        
+        ["Processus", "Gestion des incidents", "Q28", "Existe-t-il un processus écrit pour traiter les incidents ?", "Émergent", "1.1", "1.3", "oui", "5", "1.01"],
+        ["Processus", "Gestion des incidents", "Q35", "Le SOC dispose-t-il de procédures documentées pour la gestion des incidents ?", "Émergent", "1.2", "1.3", "oui", "6", "1.05"],
+        ["Processus", "Gestion des incidents", "Q36", "Les activités quotidiennes sont-elles planifiées et suivies ?", "Émergent", "1.0", "1.3", "oui", "4", "1.00"],
+        ["Processus", "Gestion des incidents", "Q37", "Votre SOC maintient-elle un registre formel des incidents passés ?", "Émergent", "1.0", "1.3", "oui", "4", "1.04"],
+        ["Processus", "Gestion des incidents", "Q38", "Le SOC a-t-il des playbooks pour gérer les incidents ?", "Structurant", "1.1", "1.3", "oui", "5", "1.04"],
+        ["Processus", "Gestion des incidents", "Q42", "Les incidents critiques font-ils l'objet d'une analyse approfondie ?", "Stabilisé", "1.0", "1.3", "oui", "4", "0.96"],
+        ["Processus", "Gouvernance opérationnelle", "Q39", "Un processus formel garantit-il la révision régulière des procédures ?", "Structurant", "1.1", "1.2", "oui", "5", "0.96"],
+        ["Processus", "Gouvernance opérationnelle", "Q40", "Le SOC dispose-t-il d'un cadre de gouvernance formel ?", "Structurant", "1.1", "1.2", "oui", "5", "0.92"],
+        ["Processus", "Gouvernance opérationnelle", "Q41", "Les processus du SOC incluent-ils formellement les partenaires externes ?", "Structurant", "1.1", "1.2", "oui", "5", "0.92"],
+        ["Processus", "Indicateurs & amélioration", "Q43", "Les processus SOC intègrent-ils des KPIs ?", "Stabilisé", "1.1", "1.2", "oui", "5", "0.88"],
+        ["Processus", "Indicateurs & amélioration", "Q44", "Un processus structuré d'amélioration continue est-il mis en place ?", "Stabilisé", "1.0", "1.2", "oui", "4", "0.84"],
+        ["Processus", "Audit & retour d'expérience", "Q45", "Les processus opérationnels font-ils l'objet d'audits réguliers ?", "Piloté", "1.1", "1.2", "oui", "5", "0.84"],
+        ["Processus", "Audit & retour d'expérience", "Q46", "Le retour d'expérience est-il intégré systématiquement ?", "Piloté", "1.0", "1.2", "oui", "4", "0.80"],
+        ["Processus", "Évaluation des pratiques", "Q47", "Comment l'organisation vérifie-t-elle l'adéquation de ses processus SOC ?", "Piloté", "1.0", "1.2", "oui", "4", "0.80"],
+        ["Processus", "Adaptabilité", "Q48", "Le SOC intègre-t-il rapidement les nouveaux processus ?", "Transformant", "1.0", "1.2", "oui", "4", "0.84"],
+        ["Processus", "Adaptabilité", "Q49", "Le SOC utilise-t-il des outils avancés (IA, process mining) ?", "Transformant", "1.0", "1.2", "oui", "4", "0.88"],
+        
+        ["Indicateurs", "Indicateurs de performance", "Q50", "Votre SOC a établi une liste officielle et à jour de tous les indicateurs de performance actuellement surveillés ?", "Émergent", "1.0", "1.2", "oui", "4", "0.97"],
+        ["Indicateurs", "Indicateurs de performance", "Q52", "Votre SOC mesure-t-il et suit-il systématiquement le temps moyen nécessaire pour résoudre un incident (MTTR) ?", "Émergent", "1.1", "1.2", "oui", "5", "1.04"],
+        ["Indicateurs", "Indicateurs de performance", "Q53", "Votre SOC suit-il systématiquement le volume total de tickets ou d'incidents ouverts, traités et clôturés ?", "Émergent", "1.1", "1.2", "oui", "5", "1.04"],
+        ["Indicateurs", "Collecte de données", "Q51", "Par quels moyens votre équipe SOC récupère-t-elle les données des indicateurs clés ?", "Émergent", "1.0", "1.2", "oui", "4", "1.01"],
+        ["Indicateurs", "Mécanismes de reporting", "Q54", "Disposez-vous d'indicateurs mesurant la qualité des alertes générées ?", "Structurant", "1.2", "1.2", "oui", "6", "1.04"],
+        ["Indicateurs", "Mécanismes de reporting", "Q55", "Mesurez-vous le délai moyen entre génération et prise en charge d'une alerte (MTTA) ?", "Structurant", "1.1", "1.2", "oui", "5", "1.00"],
+        ["Indicateurs", "Mécanismes de reporting", "Q56", "Les indicateurs clés sont-ils régulièrement communiqués aux parties prenantes ?", "Structurant", "1.1", "1.2", "oui", "5", "1.00"],
+        ["Indicateurs", "Mécanismes de reporting", "Q60", "Les résultats mesurés sont-ils partagés avec les analystes ?", "Stabilisé", "1.1", "1.1", "oui", "5", "0.96"],
+        ["Indicateurs", "Indicateurs & amélioration", "Q57", "Disposez-vous d'un processus structuré de vérification de la pertinence des indicateurs ?", "Structurant", "1.1", "1.2", "oui", "5", "1.00"],
+        ["Indicateurs", "Approches de benchmarking", "Q58", "Votre SOC compare-t-il ses performances à des benchmarks externes ?", "Stabilisé", "1.1", "1.1", "oui", "5", "0.92"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q59", "Votre SOC utilise-t-il des outils automatisés pour collecter les indicateurs ?", "Stabilisé", "1.1", "1.1", "oui", "5", "0.92"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q61", "Vos indicateurs couvrent-ils les aspects humains et organisationnels ?", "Stabilisé", "1.1", "1.1", "oui", "5", "0.96"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q62", "Existe-t-il un mécanisme formel de comparaison des indicateurs aux objectifs fixés ?", "Stabilisé", "1.1", "1.1", "oui", "5", "0.96"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q63", "Les indicateurs servent-ils à ajuster les ressources humaines et techniques ?", "Piloté", "1.1", "1.1", "oui", "5", "0.99"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q64", "Le SOC dispose-t-il d'outils interactifs (dashboards) ?", "Piloté", "1.2", "1.1", "oui", "6", "1.03"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q65", "Le SOC analyse-t-il les tendances passées pour prévoir les besoins futurs ?", "Piloté", "1.1", "1.1", "oui", "5", "1.01"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q66", "Le SOC évalue-t-il l'utilité réelle des indicateurs ?", "Piloté", "1.1", "1.1", "oui", "5", "1.04"],
+        ["Indicateurs", "Capacités d'analyse avancée", "Q67", "Les indicateurs sont-ils intégrés à un cycle PDCA ?", "Transformant", "1.2", "1.1", "oui", "6", "1.10"],
+        ["Indicateurs", "Stratégie adaptative", "Q68", "Le SOC suit-il des indicateurs spécifiques pour adapter sa stratégie ?", "Transformant", "1.2", "1.1", "oui", "6", "1.10"]
+      ];
+      
+      // Création de la structure de tableau en HTML
+      let tableHTML = `
+        <table id="socFinal" class="display">
+          <thead>
+            <tr>
+              <th>Domaine</th>
+              <th>Composant</th>
+              <th>Code</th>
+              <th>Question</th>
+              <th>Niveau maturité</th>
+              <th>Pond. question (1.0–1.2)</th>
+              <th>Pond. composant (1.0–1.3)</th>
+              <th>Criticité du composant</th>
+              <th>Score_Question</th>
+              <th>Score_Composant</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      // Ajout des données au tableau
+      for (let i = 0; i < tableData.length; i++) {
+        const row = tableData[i];
+        const domaine = row[0];
+        const composant = row[1];
+        const code = row[2];
+        const question = row[3];
+        const niveauMaturite = row[4];
+        const pondQuestion = row[5];
+        const pondComposant = row[6];
+        const criticite = row[7];
+        const scoreQuestion = row[8];
+        const scoreComposant = row[9];
+        
+        // Détermination des classes pour les cellules
+        let domaineClass = "domaine-cell";
+        let composantClass = "composant-cell";
+        let niveauClass = "";
+        let criticiteClass = "";
+        
+        // Application des classes conditionnelles
+        if (niveauMaturite === "Émergent") niveauClass = "emergent";
+        else if (niveauMaturite === "Structurant") niveauClass = "structurant";
+        else if (niveauMaturite === "Stabilisé") niveauClass = "stabilise";
+        else if (niveauMaturite === "Piloté") niveauClass = "pilote";
+        else if (niveauMaturite === "Transformant") niveauClass = "transformant";
+        
+        if (criticite.toLowerCase() === "oui") criticiteClass = "criticite-oui";
+        else criticiteClass = "criticite-non";
+        
+        tableHTML += `
+          <tr>
+            <td class="${domaineClass}">${domaine}</td>
+            <td class="${composantClass}">${composant}</td>
+            <td>${code}</td>
+            <td>${question}</td>
+            <td class="${niveauClass}">${niveauMaturite}</td>
+            <td>${pondQuestion}</td>
+            <td>${pondComposant}</td>
+            <td class="${criticiteClass}">${criticite}</td>
+            <td>${scoreQuestion}</td>
+            <td>${scoreComposant}</td>
+          </tr>
+        `;
+      }
+      
+      tableHTML += `
+          </tbody>
+        </table>
+      `;
+      
+      // Insertion du tableau dans le conteneur
+      $('#tableContainer').html(tableHTML);
+      
+      // Initialisation de DataTables avec des options simplifiées
+      $('#socFinal').DataTable({
+        "pageLength": 25,
+        "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
+        },
+        "ordering": true,
+        "order": [[0, 'asc'], [1, 'asc'], [2, 'asc']],
+        "columnDefs": [
+          { "orderable": false, "targets": [3] },
+          { "width": "15%", "targets": [3] },
+          { "width": "12%", "targets": [0, 1] },
+          { "width": "8%", "targets": [4] },
+          { "width": "5%", "targets": [2, 5, 6, 7, 8, 9] }
+        ]
+      });
+    });
+  </script></div>
+<footer>
+<p>© 2025 – Système de Notation de Maturité SOC – Développé par elfaiza.elkarie</p>
+</footer>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+      // La référence au tableau de pondération a été supprimée puisque la section a été enlevée
+    });
+  </script>
+</body>
+</html>
